@@ -9,7 +9,7 @@
 ![Firebase](https://img.shields.io/badge/Firebase-Firestore-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 
-[🎥 Vídeo de Demonstração](#) • [📦 Repositório](https://github.com/castropatrick/notes-app)
+[🎥 Vídeo de Demonstração](https://www.youtube.com/watch?v=OScl7GulPZE) • [📦 Repositório](https://github.com/castropatrick/notes-app)
 
 </div>
 
