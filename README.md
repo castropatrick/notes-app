@@ -78,6 +78,7 @@ cd notes-app
 
 # Instale as dependências
 npm install --legacy-peer-deps
+npm install react-dom --legacy-peer-deps
 
 # Inicie o projeto
 npx expo start
