@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import {View, Text, TextInput, TouchableOpacity,StyleSheet, Alert, ActivityIndicator,KeyboardAvoidingView, Platform} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity,StyleSheet, Alert, ActivityIndicator,KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { criarNota, atualizarNota } from '../services/noteService';
 import { auth } from '../services/firebaseConfig';
+import { notificarNotaCriada } from '../services/notificationService';
 
 export default function NoteFormScreen() {
   const router = useRouter();
@@ -29,7 +30,10 @@ export default function NoteFormScreen() {
       : criarNota(user.uid, titulo, conteudo);
 
     acao
-      .then(() => {
+      .then(async () => {
+        if (!editando) {
+          await notificarNotaCriada(titulo);
+        }
         router.back();
       })
       .catch((error) => {

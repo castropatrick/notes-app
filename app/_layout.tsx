@@ -1,10 +1,11 @@
 import { Stack } from 'expo-router';
-import { View } from 'react-native';
+import { useEffect } from 'react';
+import { configurarNotificacoes } from '../services/notificationService';
 
 export default function Layout() {
-  return (
-    <View style={{ flex: 1 }}>
-      <Stack screenOptions={{ headerShown: false }} />
-    </View>
-  );
+  useEffect(() => {
+    configurarNotificacoes();
+  }, []);
+
+  return <Stack screenOptions={{ headerShown: false }} />
 }
