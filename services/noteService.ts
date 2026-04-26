@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc,doc, getDocs,query,serverTimestamp, updateDoc,where,orderBy} from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, query, serverTimestamp, updateDoc, where, orderBy } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 
 type Nota = {
@@ -6,6 +6,8 @@ type Nota = {
   titulo: string;
   conteudo: string;
   userId: string;
+  latitude?: number;
+  longitude?: number;
   criadoEm?: unknown;
   atualizadoEm?: unknown;
 }
@@ -20,11 +22,13 @@ export async function listarNotas(userId: string) {
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Nota[];
 }
 
-export async function criarNota(userId: string, titulo: string, conteudo: string) {
+export async function criarNota(userId: string, titulo: string, conteudo: string, latitude?: number, longitude?: number) {
   await addDoc(collection(db, 'notas'), {
     userId,
     titulo,
     conteudo,
+    latitude: latitude || null,
+    longitude: longitude || null,
     criadoEm: serverTimestamp(),
     atualizadoEm: serverTimestamp(),
   });
