@@ -63,7 +63,7 @@ O **Notes.APP** é um aplicativo mobile desenvolvido com React Native e Firebase
 - Ícone 📍 na lista de notas para abrir o mapa
 - Exibição das coordenadas GPS na tela de criação
 
-#### 📍 Geocoding (Extra — 0.5 pts)
+#### 📍 Geocoding 
 - Conversão de coordenadas em endereço legível (rua, cidade, estado) via `Location.reverseGeocodeAsync`
 - Endereço exibido na tela do mapa e no marcador
 
