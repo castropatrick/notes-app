@@ -46,6 +46,9 @@
   "errorSaveNote": "Não foi possível salvar a nota.",
   "error": "Erro",
   "exit": "Sair",
-  "locationDenied": "Permissão de localização negada. A nota será salva sem coordenadas."
+  "locationDenied": "Permissão de localização negada. A nota será salva sem coordenadas.",
+  "mapTag": "// LOCALIZAÇÃO",
+  "mapTitle": "MAPA",
+  "mapSuffix": ".GPS"
   
 }
