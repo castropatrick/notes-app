@@ -1,24 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { criarNota, atualizarNota } from '../services/noteService';
 import { auth } from '../services/firebaseConfig';
 import { useTranslation } from 'react-i18next';
+import * as Location from 'expo-location';
 
 export default function NoteFormScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const { t } = useTranslation();
+  const { t: traducao } = useTranslation();
 
   const editando = !!params.id;
 
   const [titulo, setTitulo] = useState(params.titulo as string || '');
   const [conteudo, setConteudo] = useState(params.conteudo as string || '');
   const [carregando, setCarregando] = useState(false);
+  const [localizacao, setLocalizacao] = useState<{ latitude: number; longitude: number } | null>(null);
+
+  
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(traducao('attention'), traducao('locationDenied'));
+        return;
+      }
+      const loc = await Location.getCurrentPositionAsync({});
+      setLocalizacao({
+        latitude: loc.coords.latitude,
+        longitude: loc.coords.longitude,
+      });
+    })();
+  }, []);
 
   const handleSalvar = () => {
     if (!titulo || !conteudo) {
-      Alert.alert(t('attention'), t('fillAllFields'));
+      Alert.alert(traducao('attention'), traducao('fillAllFields'));
       return;
     }
     setCarregando(true);
@@ -28,7 +46,7 @@ export default function NoteFormScreen() {
 
     const acao = editando
       ? atualizarNota(params.id as string, titulo, conteudo)
-      : criarNota(user.uid, titulo, conteudo);
+      : criarNota(user.uid, titulo, conteudo, localizacao?.latitude, localizacao?.longitude);
 
     acao
       .then(() => {
@@ -36,7 +54,7 @@ export default function NoteFormScreen() {
       })
       .catch((error) => {
         console.log(error);
-        Alert.alert(t('error'), t('errorSaveNote'));
+        Alert.alert(traducao('error'), traducao('errorSaveNote'));
       })
       .finally(() => setCarregando(false));
   };
@@ -48,29 +66,35 @@ export default function NoteFormScreen() {
     >
       <View style={styles.header}>
         <View>
-          <Text style={styles.tag}>{editando ? t('editNote') : t('newNote')}</Text>
-          <Text style={styles.titulo}>{editando ? t('editNoteTitle') : t('createNote')}<Text style={styles.tituloNeon}>{t('noteSuffix')}</Text></Text>
+          <Text style={styles.tag}>{editando ? traducao('editNote') : traducao('newNote')}</Text>
+          <Text style={styles.titulo}>{editando ? traducao('editNoteTitle') : traducao('createNote')}<Text style={styles.tituloNeon}>{traducao('noteSuffix')}</Text></Text>
         </View>
         <TouchableOpacity style={styles.botaoVoltar} onPress={() => router.back()}>
-          <Text style={styles.botaoVoltarTexto}>{t('back')}</Text>
+          <Text style={styles.botaoVoltarTexto}>{traducao('back')}</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.linha} />
 
-      <Text style={styles.label}>{t('title')}</Text>
+      {localizacao && (
+        <Text style={styles.gpsInfo}>
+          GPS: {localizacao.latitude.toFixed(4)}, {localizacao.longitude.toFixed(4)}
+        </Text>
+      )}
+
+      <Text style={styles.label}>{traducao('title')}</Text>
       <TextInput
         style={styles.input}
-        placeholder={t('titlePlaceholder')}
+        placeholder={traducao('titlePlaceholder')}
         placeholderTextColor="#444"
         value={titulo}
         onChangeText={setTitulo}
       />
 
-      <Text style={styles.label}>{t('content')}</Text>
+      <Text style={styles.label}>{traducao('content')}</Text>
       <TextInput
         style={[styles.input, styles.inputArea]}
-        placeholder={t('contentPlaceholder')}
+        placeholder={traducao('contentPlaceholder')}
         placeholderTextColor="#444"
         value={conteudo}
         onChangeText={setConteudo}
@@ -81,7 +105,7 @@ export default function NoteFormScreen() {
       <TouchableOpacity style={styles.botao} onPress={handleSalvar} disabled={carregando}>
         {carregando
           ? <ActivityIndicator color="#0a0a0a" />
-          : <Text style={styles.textoBotao}>{editando ? t('update') : t('save')}</Text>
+          : <Text style={styles.textoBotao}>{editando ? traducao('update') : traducao('save')}</Text>
         }
       </TouchableOpacity>
     </KeyboardAvoidingView>
@@ -175,5 +199,12 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '900',
     letterSpacing: 2,
+  },
+  gpsInfo: {
+    color: '#39ff14',
+    fontSize: 10,
+    letterSpacing: 1,
+    marginBottom: 16,
+    fontFamily: Platform.OS === 'android' ? 'monospace' : 'Courier',
   },
 });
