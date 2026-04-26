@@ -55,15 +55,18 @@ export default function NoteFormScreen() {
 
     acao
       .then(async () => {
-
         if (!editando) {
-          await Notifications.scheduleNotificationAsync({
-            content: {
-              title: traducao('noteCreatedTitle'),
-              body: traducao('noteCreatedBody'),
-            },
-            trigger: null,
-          });
+          try {
+            await Notifications.scheduleNotificationAsync({
+              content: {
+                title: traducao('noteCreatedTitle'),
+                body: traducao('noteCreatedBody'),
+              },
+              trigger: null,
+            });
+          } catch (e) {
+            console.log('Notificação indisponível no Expo Go');
+          }
         }
         router.back();
       })

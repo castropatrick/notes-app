@@ -40,14 +40,17 @@ export default function LoginScreen() {
       .then(async (userCredential) => {
         await AsyncStorage.setItem('@user', JSON.stringify(userCredential.user));
 
-
-        await Notifications.scheduleNotificationAsync({
-          content: {
-            title: t('welcomeTitle'),
-            body: t('welcomeBody'),
-          },
-          trigger: null,
-        });
+        try {
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: t('welcomeTitle'),
+              body: t('welcomeBody'),
+            },
+            trigger: null,
+          });
+        } catch (e) {
+          console.log('Notificação indisponível no Expo Go');
+        }
 
         router.replace('/HomeScreen');
       })
