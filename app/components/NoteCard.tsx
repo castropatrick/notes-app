@@ -1,19 +1,27 @@
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 type Props = {
   titulo: string;
   conteudo: string;
+  latitude?: number;
+  longitude?: number;
   onEditar: () => void;
   onDeletar: () => void;
+  onMapa?: () => void;
 }
 
-export default function NoteCard({ titulo, conteudo, onEditar, onDeletar }: Props) {
+export default function NoteCard({ titulo, conteudo, latitude, longitude, onEditar, onDeletar, onMapa }: Props) {
   return (
     <View style={styles.card}>
       <TouchableOpacity style={styles.cardConteudo} onPress={onEditar}>
         <Text style={styles.cardTitulo}>{titulo}</Text>
         <Text style={styles.cardTexto} numberOfLines={2}>{conteudo}</Text>
       </TouchableOpacity>
+      {latitude && longitude && onMapa && (
+        <TouchableOpacity onPress={onMapa}>
+          <Text style={styles.mapa}>📍</Text>
+        </TouchableOpacity>
+      )}
       <TouchableOpacity onPress={onDeletar}>
         <Text style={styles.deletar}>✕</Text>
       </TouchableOpacity>
@@ -44,6 +52,10 @@ const styles = StyleSheet.create({
   cardTexto: {
     color: '#555',
     fontSize: 13,
+  },
+  mapa: {
+    fontSize: 18,
+    paddingLeft: 8,
   },
   deletar: {
     color: '#ff003c',

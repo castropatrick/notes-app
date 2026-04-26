@@ -102,8 +102,11 @@ export default function HomeScreen() {
             <NoteCard
               titulo={item.titulo}
               conteudo={item.conteudo}
+              latitude={item.latitude}
+              longitude={item.longitude}
               onEditar={() => router.push({ pathname: '/NoteFormScreen', params: { id: item.id, titulo: item.titulo, conteudo: item.conteudo } })}
               onDeletar={() => handleDeletar(item.id)}
+              onMapa={() => router.push({ pathname: '/MapScreen', params: { latitude: item.latitude, longitude: item.longitude, titulo: item.titulo } })}
             />
           )}
         />

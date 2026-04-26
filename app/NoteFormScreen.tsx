@@ -10,27 +10,31 @@ export default function NoteFormScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const { t: traducao } = useTranslation();
-
   const editando = !!params.id;
-
   const [titulo, setTitulo] = useState(params.titulo as string || '');
   const [conteudo, setConteudo] = useState(params.conteudo as string || '');
   const [carregando, setCarregando] = useState(false);
-  const [localizacao, setLocalizacao] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [localizacao, setLocalizacao] = useState<{ latitude: number; longitude: number }>({
+    latitude: -23.5505,
+    longitude: -46.6333,
+  });
 
-  
   useEffect(() => {
     (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert(traducao('attention'), traducao('locationDenied'));
-        return;
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') return;
+
+        const loc = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Lowest,
+        });
+        setLocalizacao({
+          latitude: loc.coords.latitude,
+          longitude: loc.coords.longitude,
+        });
+      } catch (error) {
+        console.log('GPS indisponível, usando fallback');
       }
-      const loc = await Location.getCurrentPositionAsync({});
-      setLocalizacao({
-        latitude: loc.coords.latitude,
-        longitude: loc.coords.longitude,
-      });
     })();
   }, []);
 
@@ -76,7 +80,7 @@ export default function NoteFormScreen() {
 
       <View style={styles.linha} />
 
-      {localizacao && (
+      {localizacao && !editando && (
         <Text style={styles.gpsInfo}>
           GPS: {localizacao.latitude.toFixed(4)}, {localizacao.longitude.toFixed(4)}
         </Text>
