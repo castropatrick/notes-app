@@ -49,5 +49,9 @@
     "locationDenied": "Location permission denied. Note will be saved without coordinates.",
     "mapTag": "// LOCATION",
     "mapTitle": "MAP",
-    "mapSuffix": ".GPS"
+    "mapSuffix": ".GPS",
+    "welcomeTitle": "Welcome!",
+    "welcomeBody": "You are logged in to NOTES.APP",
+    "noteCreatedTitle": "Note created!",
+    "noteCreatedBody": "Your note was saved successfully."
 }
