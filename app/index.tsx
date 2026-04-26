@@ -5,6 +5,7 @@ import { auth } from '../services/firebaseConfig';
 import { useRouter, Link } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
+import * as Notifications from 'expo-notifications';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -38,6 +39,16 @@ export default function LoginScreen() {
     signInWithEmailAndPassword(auth, email, senha)
       .then(async (userCredential) => {
         await AsyncStorage.setItem('@user', JSON.stringify(userCredential.user));
+
+
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: t('welcomeTitle'),
+            body: t('welcomeBody'),
+          },
+          trigger: null,
+        });
+
         router.replace('/HomeScreen');
       })
       .catch((error) => {
