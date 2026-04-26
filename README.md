@@ -25,9 +25,6 @@
 | Patrick Castro Quintana | RM559271 |
 | Rodrigo Naoki Yamasaki | RM560759 |
 
-**Professor:** Fernando Pinéo de Abreu
-**Disciplina:** Mobile App Development
-**Instituição:** FIAP
 
 ---
 
