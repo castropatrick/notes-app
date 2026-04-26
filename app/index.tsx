@@ -1,15 +1,21 @@
 import { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity,StyleSheet, Alert, ActivityIndicator, KeyboardAvoidingView, Platform} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../services/firebaseConfig';
 import { useRouter, Link } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [carregando, setCarregando] = useState(false);
   const router = useRouter();
+  const { t, i18n } = useTranslation();
+
+  const mudarIdioma = (lang: string) => {
+    i18n.changeLanguage(lang);
+  };
 
   useEffect(() => {
     const verificarLogin = async () => {
@@ -25,7 +31,7 @@ export default function LoginScreen() {
 
   const handleLogin = () => {
     if (!email || !senha) {
-      Alert.alert('Atenção', 'Preencha todos os campos!');
+      Alert.alert(t('attention'), t('fillAllFields'));
       return;
     }
     setCarregando(true);
@@ -36,7 +42,7 @@ export default function LoginScreen() {
       })
       .catch((error) => {
         console.log(error.code, error.message);
-        Alert.alert('Atenção', 'Credenciais inválidas, verifique e-mail e senha.');
+        Alert.alert(t('attention'), t('errorInvalidCredentials'));
       })
       .finally(() => setCarregando(false));
   };
@@ -47,16 +53,31 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={styles.header}>
-        <Text style={styles.tag}>ACESSO AO SISTEMA</Text>
-        <Text style={styles.titulo}>NOTAS<Text style={styles.tituloNeon}>.APP</Text></Text>
+        <Text style={styles.tag}>{t('systemAccess')}</Text>
+        <Text style={styles.titulo}>{t('appName')}<Text style={styles.tituloNeon}>{t('appNameSuffix')}</Text></Text>
         <View style={styles.linha} />
       </View>
 
+      <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 15 }}>
+        <TouchableOpacity
+          style={[styles.langBotao, { marginRight: 10, backgroundColor: i18n.language === 'pt' ? '#b400ff' : '#222' }]}
+          onPress={() => mudarIdioma('pt')}
+        >
+          <Text style={styles.langTexto}>PT</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.langBotao, { backgroundColor: i18n.language === 'en' ? '#b400ff' : '#222' }]}
+          onPress={() => mudarIdioma('en')}
+        >
+          <Text style={styles.langTexto}>EN</Text>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.form}>
-        <Text style={styles.label}>E-MAIL</Text>
+        <Text style={styles.label}>{t('email')}</Text>
         <TextInput
           style={styles.input}
-          placeholder="usuario@email.com"
+          placeholder={t('emailPlaceholder')}
           placeholderTextColor="#444"
           keyboardType="email-address"
           autoCapitalize="none"
@@ -64,10 +85,10 @@ export default function LoginScreen() {
           onChangeText={setEmail}
         />
 
-        <Text style={styles.label}>SENHA</Text>
+        <Text style={styles.label}>{t('password')}</Text>
         <TextInput
           style={styles.input}
-          placeholder="••••••••"
+          placeholder={t('passwordPlaceholder')}
           placeholderTextColor="#444"
           secureTextEntry
           value={senha}
@@ -77,12 +98,12 @@ export default function LoginScreen() {
         <TouchableOpacity style={styles.botao} onPress={handleLogin} disabled={carregando}>
           {carregando
             ? <ActivityIndicator color="#0a0a0a" />
-            : <Text style={styles.textoBotao}>ENTRAR</Text>
+            : <Text style={styles.textoBotao}>{t('login')}</Text>
           }
         </TouchableOpacity>
 
         <Link href="/CadastroScreen" style={styles.link}>
-          Não tem conta? <Text style={styles.linkNeon}>Cadastre-se</Text>
+          {t('noAccount')}<Text style={styles.linkNeon}>{t('register')}</Text>
         </Link>
       </View>
     </KeyboardAvoidingView>
@@ -173,5 +194,18 @@ const styles = StyleSheet.create({
   linkNeon: {
     color: '#b400ff',
     fontWeight: 'bold',
+  },
+  langBotao: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  langTexto: {
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: '900',
+    letterSpacing: 2,
   },
 });
