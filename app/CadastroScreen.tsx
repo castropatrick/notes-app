@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity,StyleSheet, Alert, ActivityIndicator, KeyboardAvoidingView, Platform} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../services/firebaseConfig';
 import { useRouter, Link } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 
 export default function CadastroScreen() {
   const [email, setEmail] = useState('');
@@ -11,18 +12,19 @@ export default function CadastroScreen() {
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [carregando, setCarregando] = useState(false);
   const router = useRouter();
+  const { t } = useTranslation();
 
   const handleCadastro = () => {
     if (!email || !senha || !confirmarSenha) {
-      Alert.alert('Atenção', 'Preencha todos os campos!');
+      Alert.alert(t('attention'), t('fillAllFields'));
       return;
     }
     if (senha !== confirmarSenha) {
-      Alert.alert('Atenção', 'As senhas não coincidem!');
+      Alert.alert(t('attention'), t('passwordsDontMatch'));
       return;
     }
     if (senha.length < 6) {
-      Alert.alert('Atenção', 'A senha deve ter no mínimo 6 caracteres!');
+      Alert.alert(t('attention'), t('passwordMinLength'));
       return;
     }
     setCarregando(true);
@@ -33,7 +35,7 @@ export default function CadastroScreen() {
       })
       .catch((error) => {
         console.log(error.code, error.message);
-        Alert.alert('Erro', 'Não foi possível criar a conta. Verifique o e-mail informado.');
+        Alert.alert(t('error'), t('errorCreateAccount'));
       })
       .finally(() => setCarregando(false));
   };
@@ -44,16 +46,16 @@ export default function CadastroScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={styles.header}>
-        <Text style={styles.tag}>// NOVO USUÁRIO</Text>
-        <Text style={styles.titulo}>CADAS<Text style={styles.tituloNeon}>TRO</Text></Text>
+        <Text style={styles.tag}>{t('newUser')}</Text>
+        <Text style={styles.titulo}>{t('registerTitle')}<Text style={styles.tituloNeon}>{t('registerTitleSuffix')}</Text></Text>
         <View style={styles.linha} />
       </View>
 
       <View style={styles.form}>
-        <Text style={styles.label}>E-MAIL</Text>
+        <Text style={styles.label}>{t('email')}</Text>
         <TextInput
           style={styles.input}
-          placeholder="usuario@email.com"
+          placeholder={t('emailPlaceholder')}
           placeholderTextColor="#444"
           keyboardType="email-address"
           autoCapitalize="none"
@@ -61,20 +63,20 @@ export default function CadastroScreen() {
           onChangeText={setEmail}
         />
 
-        <Text style={styles.label}>SENHA</Text>
+        <Text style={styles.label}>{t('password')}</Text>
         <TextInput
           style={styles.input}
-          placeholder="••••••••"
+          placeholder={t('passwordPlaceholder')}
           placeholderTextColor="#444"
           secureTextEntry
           value={senha}
           onChangeText={setSenha}
         />
 
-        <Text style={styles.label}>CONFIRMAR SENHA</Text>
+        <Text style={styles.label}>{t('confirmPassword')}</Text>
         <TextInput
           style={styles.input}
-          placeholder="••••••••"
+          placeholder={t('passwordPlaceholder')}
           placeholderTextColor="#444"
           secureTextEntry
           value={confirmarSenha}
@@ -84,12 +86,12 @@ export default function CadastroScreen() {
         <TouchableOpacity style={styles.botao} onPress={handleCadastro} disabled={carregando}>
           {carregando
             ? <ActivityIndicator color="#0a0a0a" />
-            : <Text style={styles.textoBotao}>CRIAR CONTA</Text>
+            : <Text style={styles.textoBotao}>{t('createAccount')}</Text>
           }
         </TouchableOpacity>
 
         <Link href="/" style={styles.link}>
-          Já tem conta? <Text style={styles.linkNeon}>Faça login</Text>
+          {t('hasAccount')}<Text style={styles.linkNeon}>{t('doLogin')}</Text>
         </Link>
       </View>
     </KeyboardAvoidingView>

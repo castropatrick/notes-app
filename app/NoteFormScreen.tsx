@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import {View, Text, TextInput, TouchableOpacity,StyleSheet, Alert, ActivityIndicator,KeyboardAvoidingView, Platform} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { criarNota, atualizarNota } from '../services/noteService';
 import { auth } from '../services/firebaseConfig';
+import { useTranslation } from 'react-i18next';
 
 export default function NoteFormScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
+  const { t } = useTranslation();
 
   const editando = !!params.id;
 
@@ -16,7 +18,7 @@ export default function NoteFormScreen() {
 
   const handleSalvar = () => {
     if (!titulo || !conteudo) {
-      Alert.alert('Atenção', 'Preencha todos os campos!');
+      Alert.alert(t('attention'), t('fillAllFields'));
       return;
     }
     setCarregando(true);
@@ -34,7 +36,7 @@ export default function NoteFormScreen() {
       })
       .catch((error) => {
         console.log(error);
-        Alert.alert('Erro', 'Não foi possível salvar a nota.');
+        Alert.alert(t('error'), t('errorSaveNote'));
       })
       .finally(() => setCarregando(false));
   };
@@ -46,29 +48,29 @@ export default function NoteFormScreen() {
     >
       <View style={styles.header}>
         <View>
-          <Text style={styles.tag}>{editando ? '// EDITAR NOTA' : '// NOVA NOTA'}</Text>
-          <Text style={styles.titulo}>{editando ? 'EDITAR' : 'CRIAR'}<Text style={styles.tituloNeon}>.NOTA</Text></Text>
+          <Text style={styles.tag}>{editando ? t('editNote') : t('newNote')}</Text>
+          <Text style={styles.titulo}>{editando ? t('editNoteTitle') : t('createNote')}<Text style={styles.tituloNeon}>{t('noteSuffix')}</Text></Text>
         </View>
         <TouchableOpacity style={styles.botaoVoltar} onPress={() => router.back()}>
-          <Text style={styles.botaoVoltarTexto}>VOLTAR</Text>
+          <Text style={styles.botaoVoltarTexto}>{t('back')}</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.linha} />
 
-      <Text style={styles.label}>TÍTULO</Text>
+      <Text style={styles.label}>{t('title')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="Título da nota..."
+        placeholder={t('titlePlaceholder')}
         placeholderTextColor="#444"
         value={titulo}
         onChangeText={setTitulo}
       />
 
-      <Text style={styles.label}>CONTEÚDO</Text>
+      <Text style={styles.label}>{t('content')}</Text>
       <TextInput
         style={[styles.input, styles.inputArea]}
-        placeholder="Escreva sua nota aqui..."
+        placeholder={t('contentPlaceholder')}
         placeholderTextColor="#444"
         value={conteudo}
         onChangeText={setConteudo}
@@ -79,7 +81,7 @@ export default function NoteFormScreen() {
       <TouchableOpacity style={styles.botao} onPress={handleSalvar} disabled={carregando}>
         {carregando
           ? <ActivityIndicator color="#0a0a0a" />
-          : <Text style={styles.textoBotao}>{editando ? 'ATUALIZAR' : 'SALVAR'}</Text>
+          : <Text style={styles.textoBotao}>{editando ? t('update') : t('save')}</Text>
         }
       </TouchableOpacity>
     </KeyboardAvoidingView>

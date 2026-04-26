@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import {View, Text, FlatList, TouchableOpacity,StyleSheet, Alert, ActivityIndicator,TextInput, Platform} from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, TextInput, Platform } from 'react-native';
 import { signOut } from 'firebase/auth';
 import { auth } from '../services/firebaseConfig';
 import { listarNotas, deletarNota } from '../services/noteService';
@@ -7,12 +7,14 @@ import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import NoteCard from './components/NoteCard';
+import { useTranslation } from 'react-i18next';
 
 export default function HomeScreen() {
   const [notas, setNotas] = useState<any[]>([]);
   const [filtro, setFiltro] = useState('');
   const [carregando, setCarregando] = useState(false);
   const router = useRouter();
+  const { t } = useTranslation();
 
   const carregarNotas = async () => {
     try {
@@ -23,7 +25,7 @@ export default function HomeScreen() {
       setNotas(dados);
     } catch (error) {
       console.log('Erro ao carregar notas:', error);
-      Alert.alert('Erro', 'Não foi possível carregar as notas.');
+      Alert.alert(t('error'), t('errorLoadNotes'));
     } finally {
       setCarregando(false);
     }
@@ -36,10 +38,10 @@ export default function HomeScreen() {
   );
 
   const handleLogout = () => {
-    Alert.alert('Sair', 'Deseja realmente sair?', [
-      { text: 'Cancelar', style: 'cancel' },
+    Alert.alert(t('exit'), t('logoutConfirm'), [
+      { text: t('cancel'), style: 'cancel' },
       {
-        text: 'Sair', style: 'destructive', onPress: async () => {
+        text: t('exit'), style: 'destructive', onPress: async () => {
           await signOut(auth);
           await AsyncStorage.removeItem('@user');
           router.replace('/');
@@ -49,10 +51,10 @@ export default function HomeScreen() {
   };
 
   const handleDeletar = (id: string) => {
-    Alert.alert('Deletar', 'Tem certeza que deseja deletar esta nota?', [
-      { text: 'Cancelar', style: 'cancel' },
+    Alert.alert(t('delete'), t('deleteConfirm'), [
+      { text: t('cancel'), style: 'cancel' },
       {
-        text: 'Deletar', style: 'destructive', onPress: async () => {
+        text: t('delete'), style: 'destructive', onPress: async () => {
           await deletarNota(id);
           carregarNotas();
         }
@@ -68,11 +70,11 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.tag}>// SISTEMA ATIVO</Text>
-          <Text style={styles.titulo}>NOTAS<Text style={styles.tituloNeon}>.APP</Text></Text>
+          <Text style={styles.tag}>{t('systemActive')}</Text>
+          <Text style={styles.titulo}>{t('appName')}<Text style={styles.tituloNeon}>{t('appNameSuffix')}</Text></Text>
         </View>
         <TouchableOpacity style={styles.botaoSair} onPress={handleLogout}>
-          <Text style={styles.botaoSairTexto}>SAIR</Text>
+          <Text style={styles.botaoSairTexto}>{t('logout')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -80,7 +82,7 @@ export default function HomeScreen() {
 
       <TextInput
         style={styles.filtro}
-        placeholder="// buscar nota..."
+        placeholder={t('searchPlaceholder')}
         placeholderTextColor="#444"
         value={filtro}
         onChangeText={setFiltro}
@@ -94,16 +96,16 @@ export default function HomeScreen() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingBottom: 100 }}
           ListEmptyComponent={
-            <Text style={styles.vazio}>// nenhuma nota encontrada</Text>
+            <Text style={styles.vazio}>{t('noNotes')}</Text>
           }
-        renderItem={({ item }) => (
-        <NoteCard
-            titulo={item.titulo}
-            conteudo={item.conteudo}
-            onEditar={() => router.push({ pathname: '/NoteFormScreen', params: { id: item.id, titulo: item.titulo, conteudo: item.conteudo } })}
-            onDeletar={() => handleDeletar(item.id)}
-        />
-        )}
+          renderItem={({ item }) => (
+            <NoteCard
+              titulo={item.titulo}
+              conteudo={item.conteudo}
+              onEditar={() => router.push({ pathname: '/NoteFormScreen', params: { id: item.id, titulo: item.titulo, conteudo: item.conteudo } })}
+              onDeletar={() => handleDeletar(item.id)}
+            />
+          )}
         />
       )}
 
@@ -116,7 +118,6 @@ export default function HomeScreen() {
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
