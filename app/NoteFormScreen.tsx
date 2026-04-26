@@ -5,6 +5,7 @@ import { criarNota, atualizarNota } from '../services/noteService';
 import { auth } from '../services/firebaseConfig';
 import { useTranslation } from 'react-i18next';
 import * as Location from 'expo-location';
+import * as Notifications from 'expo-notifications';
 
 export default function NoteFormScreen() {
   const router = useRouter();
@@ -53,7 +54,17 @@ export default function NoteFormScreen() {
       : criarNota(user.uid, titulo, conteudo, localizacao?.latitude, localizacao?.longitude);
 
     acao
-      .then(() => {
+      .then(async () => {
+
+        if (!editando) {
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: traducao('noteCreatedTitle'),
+              body: traducao('noteCreatedBody'),
+            },
+            trigger: null,
+          });
+        }
         router.back();
       })
       .catch((error) => {
