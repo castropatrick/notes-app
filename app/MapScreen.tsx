@@ -1,16 +1,50 @@
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Platform, ActivityIndicator } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import MapView, { Marker } from 'react-native-maps';
 import { useTranslation } from 'react-i18next';
+import * as Location from 'expo-location';
 
 export default function MapScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const { t: traducao } = useTranslation();
+  const [endereco, setEndereco] = useState<string | null>(null);
 
   const latitude = parseFloat(params.latitude as string);
   const longitude = parseFloat(params.longitude as string);
   const titulo = params.titulo as string;
+
+  
+  const coordenadasValidas = !isNaN(latitude) && !isNaN(longitude);
+
+
+  useEffect(() => {
+    if (!coordenadasValidas) return;
+    (async () => {
+      try {
+        const resultado = await Location.reverseGeocodeAsync({ latitude, longitude });
+        if (resultado.length > 0) {
+          const loc = resultado[0];
+          const partes = [loc.street, loc.subregion, loc.city, loc.region].filter(Boolean);
+          setEndereco(partes.join(', '));
+        }
+      } catch (error) {
+        console.log('Erro no geocoding:', error);
+      }
+    })();
+  }, []);
+
+  if (!coordenadasValidas) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <Text style={styles.gpsInfo}>{traducao('noLocation')}</Text>
+        <TouchableOpacity style={styles.botaoVoltar} onPress={() => router.back()}>
+          <Text style={styles.botaoVoltarTexto}>{traducao('back')}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -30,6 +64,10 @@ export default function MapScreen() {
         GPS: {latitude.toFixed(4)}, {longitude.toFixed(4)}
       </Text>
 
+      {endereco && (
+        <Text style={styles.enderecoInfo}>{endereco}</Text>
+      )}
+
       <View style={styles.mapContainer}>
         <MapView
           style={styles.map}
@@ -43,6 +81,7 @@ export default function MapScreen() {
           <Marker
             coordinate={{ latitude, longitude }}
             title={titulo}
+            description={endereco || undefined}
             pinColor="#b400ff"
           />
         </MapView>
@@ -92,6 +131,13 @@ const styles = StyleSheet.create({
   gpsInfo: {
     color: '#39ff14',
     fontSize: 10,
+    letterSpacing: 1,
+    marginBottom: 4,
+    fontFamily: Platform.OS === 'android' ? 'monospace' : 'Courier',
+  },
+  enderecoInfo: {
+    color: '#b400ff',
+    fontSize: 11,
     letterSpacing: 1,
     marginBottom: 12,
     fontFamily: Platform.OS === 'android' ? 'monospace' : 'Courier',

@@ -53,5 +53,6 @@
     "welcomeTitle": "Bem-vindo!",
     "welcomeBody": "Você está logado no NOTAS.APP",
     "noteCreatedTitle": "Nota criada!",
-    "noteCreatedBody": "Sua nota foi salva com sucesso."
+    "noteCreatedBody": "Sua nota foi salva com sucesso.",
+    "noLocation": "// localização não disponível para esta nota"
 }

@@ -27,7 +27,12 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "package": "com.notasapp.notes",
-      "useNextNotificationsApi": true
+      "useNextNotificationsApi": true,
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDd3V-WNCJtV9DQ-gIUeHY9DXz5UtwSAGk"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -38,6 +43,12 @@
         "expo-notifications",
         {
           "color": "#39ff14"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Permitir que o app acesse sua localização para salvar nas notas."
         }
       ]
     ]
