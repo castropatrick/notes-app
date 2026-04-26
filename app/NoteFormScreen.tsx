@@ -21,17 +21,25 @@ export default function NoteFormScreen() {
     (async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
+        console.log('Permissão GPS:', status);
         if (status !== 'granted') return;
 
-        const loc = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Balanced,
-        });
-        setLocalizacao({
-          latitude: loc.coords.latitude,
-          longitude: loc.coords.longitude,
-        });
+        let loc = await Location.getLastKnownPositionAsync();
+        if (!loc) {
+          loc = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Balanced,
+          });
+        }
+
+        if (loc) {
+          console.log('GPS obtido:', loc.coords.latitude, loc.coords.longitude);
+          setLocalizacao({
+            latitude: loc.coords.latitude,
+            longitude: loc.coords.longitude,
+          });
+        }
       } catch (error) {
-        console.log('GPS indisponível, usando fallback');
+        console.log('Erro GPS:', error);
       }
     })();
   }, []);
@@ -94,6 +102,12 @@ export default function NoteFormScreen() {
       {localizacao && !editando && (
         <Text style={styles.gpsInfo}>
           GPS: {localizacao.latitude.toFixed(4)}, {localizacao.longitude.toFixed(4)}
+        </Text>
+      )}
+
+      {!localizacao && !editando && (
+        <Text style={styles.gpsInfo}>
+          GPS: {traducao('noLocation')}
         </Text>
       )}
 
