@@ -15,10 +15,7 @@ export default function NoteFormScreen() {
   const [titulo, setTitulo] = useState(params.titulo as string || '');
   const [conteudo, setConteudo] = useState(params.conteudo as string || '');
   const [carregando, setCarregando] = useState(false);
-  const [localizacao, setLocalizacao] = useState<{ latitude: number; longitude: number }>({
-    latitude: -23.5505,
-    longitude: -46.6333,
-  });
+  const [localizacao, setLocalizacao] = useState<{ latitude: number; longitude: number } | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -27,7 +24,7 @@ export default function NoteFormScreen() {
         if (status !== 'granted') return;
 
         const loc = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Lowest,
+          accuracy: Location.Accuracy.Balanced,
         });
         setLocalizacao({
           latitude: loc.coords.latitude,
