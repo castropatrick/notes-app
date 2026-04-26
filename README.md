@@ -11,7 +11,7 @@
 ![i18next](https://img.shields.io/badge/i18next-i18n-26A69A?style=for-the-badge&logo=i18next&logoColor=white)
 ![Maps](https://img.shields.io/badge/Google%20Maps-API-4285F4?style=for-the-badge&logo=googlemaps&logoColor=white)
 
-[🎥 Vídeo de Demonstração](https://www.youtube.com/watch?v=OScl7GulPZE) • [📦 Repositório](https://github.com/castropatrick/notes-app) • [📱 Download APK](https://expo.dev/accounts/castroooop/projects/notes-app/builds/a70ad6bc-93ef-430a-97cc-34257dc992a6)
+[🎥 Vídeo de Demonstração]() • [📦 Repositório](https://github.com/castropatrick/notes-app) • [📱 Download APK](https://expo.dev/accounts/castroooop/projects/notes-app/builds/a70ad6bc-93ef-430a-97cc-34257dc992a6)
 
 </div>
 
@@ -191,13 +191,13 @@ O vídeo demonstra:
 5. Notificação de confirmação ao criar nota
 6. App instalado e funcionando via APK
 
-> [Assistir vídeo](https://www.youtube.com/watch?v=OScl7GulPZE)
+> [Assistir vídeo]()
 
 ---
 
 <div align="center">
 
-Desenvolvido com 💜 por **Gabriel Rossi, Patrick Quintana e Rodrigo Yamasaki**
+Desenvolvido por **Gabriel Rossi, Patrick Quintana e Rodrigo Yamasaki**
 
 **FIAP — 2025**
 
